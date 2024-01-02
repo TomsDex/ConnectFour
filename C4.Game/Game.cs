@@ -78,7 +78,7 @@
         /// <summary>
         /// Checks if whole board is full
         /// </summary>
-        /// <returns>True if top row is full</returns>
+        /// <returns>True if top row is full </returns>
         private bool WholeBoardIsFull()
         {
             return Board[0, 0] != 'e'
