@@ -15,23 +15,26 @@
         /// Processes and returns user input
         /// </summary>
         /// <returns>The player's selected column if it is a valid input</returns>
-        public byte PlayerTurn() 
+        internal byte PlayerTurn() 
         {
-            return IsValidUserColumnInput(); 
+            return ValidUserInput(); 
         }
 
         /// <summary>
-        /// Ensures the user has entered a valid column number 
+        /// Ensures the user has entered a valid column number
+        /// or has selected u to undo
         /// </summary>
-        /// <param name="prompt"></param>
-        /// <returns>The column number</returns>
-        public static byte IsValidUserColumnInput()
+        /// <returns>The column number, or 18 if undo</returns>
+        internal static byte ValidUserInput()
         {
             while (true)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
                 char input = keyInfo.KeyChar;
 
+                if (input.ToString() == "u") { return 18; } //If user presses U signal an undo
+
+                //Otherwise
                 if (char.IsDigit(input)) //Checks that input is digit
                 {
                     byte choice = (byte)(input - '0'); //Converts char to byte
@@ -42,5 +45,27 @@
             }
         }
 
+        /// <summary>
+        /// Prompts user to input column number
+        /// </summary>
+        internal void OutputPlayerInputPrompt()
+        {
+            if (IsPlayerOne)
+            {
+                Console.Write("Player 1 (");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("X");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("), enter your column!");
+            }
+            else
+            {
+                Console.Write("Player 2 (");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("O");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("), enter your column!");
+            }
+        }
     }
 }

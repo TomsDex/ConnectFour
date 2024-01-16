@@ -6,13 +6,13 @@
 
         public Game()
         {
-            Board = CreateBoard();
+            Board = CreateEmptyBoard();
         }
 
         /// <summary>
         /// Creates a new blank board for creation of a new game
         /// </summary>
-        private char[,] CreateBoard()
+        private char[,] CreateEmptyBoard()
         {
             return new char[,]
             {          //layout of empty board
@@ -23,21 +23,6 @@
                 { 'e', 'e', 'e', 'e', 'e', 'e', 'e' },
                 { 'e', 'e', 'e', 'e', 'e', 'e', 'e' }
             };
-        }
-
-        private char[,] CreateDummyBoard()
-        {
-            return new char[,]
-            {
-                { 'X', 'X', 'X', 'X', 'X', 'X', 'e' },
-                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
-                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
-            };
-
-
         }
 
         /// <summary>
@@ -55,14 +40,14 @@
                 {
                     if (Board[row, column] == 'e') Console.Write(" "); //If (row,column) is empty, write a space
 
-                    else 
+                    else
                     {
                         if (Board[row, column] == 'X') Console.ForegroundColor = ConsoleColor.Red;
                         if (Board[row, column] == 'O') Console.ForegroundColor = ConsoleColor.Blue;
                         Console.Write(Board[row, column]); //If (row,column) has a value, write the value
                         Console.ForegroundColor = ConsoleColor.White;
-                    } 
-                    
+                    }
+
 
                     Console.Write("|"); //Border between spaces
                 }
@@ -106,21 +91,37 @@
         }
 
         /// <summary>
-        /// Contains input validation to check if the given coordinate is off the map
+        /// Contains input validation to check if the given coordinate is off the map.
+        /// This is used during win logic checking to prevent crashes when checking 
+        /// coordinates which are not on the board
         /// </summary>
         /// <param name="column"></param>
         /// <param name="row"></param>
         /// <returns>The char in the given position, otherwise 'e' if off the map</returns>
         private char ReturnPositionalChar(int row, int column)
         {
-            try
-            {
-                return Board[row, column];
-            }
-            catch (IndexOutOfRangeException)
-            {
-                return 'e';
-            }
+            try { return Board[row, column]; }
+            catch (IndexOutOfRangeException) { return 'e'; } //Return empty if the given coordinate does not exist
+        }
+
+        /// <summary>
+        /// Finds which row the last token in that column fell into
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns>The row number</returns>
+        private byte GetRowNumber(byte column)
+        {
+            byte row = 0;
+
+            //Finds the lowest empty space in the column
+            while (SpaceBelowIsEmpty(row, column)) row++;
+
+            //row would remain at 0 if the top row was full or empty if the second row was full
+            //Therefore if the selected position is empty, move down one row to the newly placed token
+            //This prevents unnecessarly moving down when the top row is not full
+            if (ReturnPositionalChar(row, column) == 'e') row++;
+
+            return row;
         }
 
         /// <summary>
@@ -129,16 +130,7 @@
         /// <returns>True if a player has connected four tokens</returns>
         private bool PlayerHasWon(byte column)
         {
-            byte row = 0;
-
-
-            //Finds the lowest empty space in the column
-            while (SpaceBelowIsEmpty(row, column)) row++;
-
-            //row would remain at 0 if the top row was full or empty
-            //Therefore if the selected position is empty, move down one row to the newly placed token
-            if (ReturnPositionalChar(row, column) == 'e') row++;
-
+            byte row = GetRowNumber(column); //Get full coords of token last placed
 
             //Positions in relation to new token are as follows (8 is new token)
             //  0   1   2
@@ -167,69 +159,69 @@
                     switch (i) //Return true if any of the three in a row in the grid continue to be a four in a row
                     {
                         case 0:
-                            if (    ReturnPositionalChar(row - 2, column - 2)   == surroundings[8] ||
-                                    ReturnPositionalChar(row + 2, column + 2)   == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row - 2, column - 2) == surroundings[8] ||
+                                    ReturnPositionalChar(row + 2, column + 2) == surroundings[8]) return true;
                             else break;
 
                         case 1:
-                            if (    ReturnPositionalChar(row - 2, column)       == surroundings[8] ||
-                                    ReturnPositionalChar(row + 2, column)       == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row - 2, column) == surroundings[8] ||
+                                    ReturnPositionalChar(row + 2, column) == surroundings[8]) return true;
                             else break;
 
                         case 2:
-                            if (    ReturnPositionalChar(row - 2, column + 2)   == surroundings[8] ||
-                                    ReturnPositionalChar(row + 2, column - 2)   == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row - 2, column + 2) == surroundings[8] ||
+                                    ReturnPositionalChar(row + 2, column - 2) == surroundings[8]) return true;
                             else break;
 
                         case 3:
-                            if (    ReturnPositionalChar(row, column - 2)       == surroundings[8] ||
-                                    ReturnPositionalChar(row, column + 2)       == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row, column - 2) == surroundings[8] ||
+                                    ReturnPositionalChar(row, column + 2) == surroundings[8]) return true;
                             else break;
                     }
                 }
 
-                //If the surrounding token is the same as the new token
+                //If any specific surrounding token is the same as the new token
                 if (surroundings[i] == surroundings[8])
                 {
                     switch (i) //Return true if the two consecutive tokens in the same direction are also the same as the new token and the immediate token
                     {
                         case 0:
-                            if (    ReturnPositionalChar(row - 2, column - 2)   == surroundings[8] &&
-                                    ReturnPositionalChar(row - 3, column - 3)   == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row - 2, column - 2) == surroundings[8] &&
+                                    ReturnPositionalChar(row - 3, column - 3) == surroundings[8]) return true;
                             else break;
 
                         case 1:
-                            if (    ReturnPositionalChar(row - 2, column)       == surroundings[8] &&
-                                    ReturnPositionalChar(row - 3, column)       == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row - 2, column) == surroundings[8] &&
+                                    ReturnPositionalChar(row - 3, column) == surroundings[8]) return true;
                             else break;
 
                         case 2:
-                            if (    ReturnPositionalChar(row - 2, column + 2)   == surroundings[8] &&
-                                    ReturnPositionalChar(row - 3, column + 3)   == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row - 2, column + 2) == surroundings[8] &&
+                                    ReturnPositionalChar(row - 3, column + 3) == surroundings[8]) return true;
                             else break;
 
                         case 3:
-                            if (    ReturnPositionalChar(row, column - 2)       == surroundings[8] &&
-                                    ReturnPositionalChar(row, column - 3)       == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row, column - 2) == surroundings[8] &&
+                                    ReturnPositionalChar(row, column - 3) == surroundings[8]) return true;
                             else break;
 
                         case 4:
-                            if (    ReturnPositionalChar(row, column + 2)       == surroundings[8] &&
-                                    ReturnPositionalChar(row, column + 3)       == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row, column + 2) == surroundings[8] &&
+                                    ReturnPositionalChar(row, column + 3) == surroundings[8]) return true;
                             else break;
 
                         case 5:
-                            if (    ReturnPositionalChar(row + 2, column - 2)   == surroundings[8] &&
-                                    ReturnPositionalChar(row + 3, column - 3)   == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row + 2, column - 2) == surroundings[8] &&
+                                    ReturnPositionalChar(row + 3, column - 3) == surroundings[8]) return true;
                             else break;
 
                         case 6:
-                            if (    ReturnPositionalChar(row + 2, column)       == surroundings[8] &&
-                                    ReturnPositionalChar(row + 3, column)       == surroundings[8]) return true;
+                            if (ReturnPositionalChar(row + 2, column) == surroundings[8] &&
+                                    ReturnPositionalChar(row + 3, column) == surroundings[8]) return true;
                             else break;
 
                         case 7:
-                            if (    ReturnPositionalChar(row + 2, column + 2) == surroundings[8] &&
+                            if (ReturnPositionalChar(row + 2, column + 2) == surroundings[8] &&
                                     ReturnPositionalChar(row + 3, column + 3) == surroundings[8]) return true;
                             else break;
 
@@ -248,7 +240,6 @@
         /// <returns>True if the column was not full</returns>
         private bool TokenHasDropped(byte column, bool isPlayerOne)
         {
-
             if (ColumnIsFull(column))
             {
                 Console.WriteLine("This column is full!");
@@ -269,6 +260,15 @@
                 OutputBoard();
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Contains logic to undo the previous turn
+        /// </summary>
+        private void UndoTurn(byte lastColumn)
+        {
+            byte row = GetRowNumber(lastColumn); //Find the row which the last placed token was put in
+            Board[row, lastColumn] = 'e'; //Mark space as empty
         }
 
         /// <summary>
@@ -297,41 +297,49 @@
             bool isPlayerOneTurn = true;
             char GameStatus = 'C'; //Continues game
 
+            byte columnInput = 18; //18 is a null value to show no tokens have been placed (actually matches undo value for reusability of code)
+            byte previousColumnInput;
+
             while (GameStatus == 'C') //Turn cycle continues while no one has won
             {
-                byte columnInput;
-                if (isPlayerOneTurn)
+                Player currentPlayer = isPlayerOneTurn ? playerOne : playerTwo; //Switches player depending on value of isPlayerOneTurn
+
+                currentPlayer.OutputPlayerInputPrompt();
+
+                previousColumnInput = columnInput; //Stores the old column input in the case of an undo
+
+                while (!TokenHasDropped(columnInput, isPlayerOneTurn))
                 {
-                    Console.Write("Player 1 (");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("X");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("), enter your column!");
+                    columnInput = currentPlayer.PlayerTurn();
 
-                    columnInput = playerOne.PlayerTurn();
-
-                    if (!TokenHasDropped(columnInput, isPlayerOneTurn)) { } //Reruns TokenHasDropped if token does not drop
-
-                    else isPlayerOneTurn = false; //Switches player if token drops
-                }
-                else //Player 2's go
-                {
-                    Console.Write("Player 2 (");
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.Write("O");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("), enter your column!");
-
-                    columnInput = playerTwo.PlayerTurn();
-
-                    if (!TokenHasDropped(columnInput, isPlayerOneTurn)) { }//Reruns TokenHasDropped logic if token does not drop
-
-                    else isPlayerOneTurn = true; //Switches player if token drops
+                    if (columnInput == 18) //If user selected undo
+                    {
+                        if (previousColumnInput == 18)
+                        {
+                            Console.WriteLine("Nothing to undo!");
+                        }
+                        else
+                        {
+                            UndoTurn(previousColumnInput);
+                            Console.Clear();
+                            OutputBoard();
+                            Console.WriteLine("Turn has been undone!");
+                        }
+                    }
                 }
 
-                //Checks if anyone has won
+                isPlayerOneTurn = !isPlayerOneTurn; //Switches player if token drops or if undo turn was selected
+
+            }
+
+            //If the last input was not an undo
+            if (columnInput != 18)
+            {
+                //Check if anyone has won 
                 GameStatus = IsEndOfGame(columnInput);
             }
+        
+    
             if (GameStatus == 'F') //Board is full
             {
                 Console.WriteLine("The game has ended in a draw! The board is full.");
