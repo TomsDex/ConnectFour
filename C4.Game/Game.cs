@@ -25,6 +25,21 @@
             };
         }
 
+        private char[,] CreateDummyBoard()
+        {
+            return new char[,]
+            {
+                { 'X', 'X', 'X', 'X', 'X', 'X', 'e' },
+                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' },
+                { 'X', 'X', 'X', 'X', 'X', 'X', 'X' }
+            };
+
+
+        }
+
         /// <summary>
         /// Writes the board to the console
         /// </summary>
@@ -111,7 +126,7 @@
         /// <summary>
         /// Contains win logic
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if a player has connected four tokens</returns>
         private bool PlayerHasWon(byte column)
         {
             byte row = 0;
@@ -257,14 +272,14 @@
         }
 
         /// <summary>
-        /// Checks if either game ending condition has been met
+        /// Checks if any game ending condition has been met
         /// </summary>
         /// <returns>F for a full board, W for a win or C for a continue</returns>
         private char IsEndOfGame(byte column)
         {
-            if (WholeBoardIsFull()) return 'F'; //f for full
-            else if (PlayerHasWon(column)) return 'W'; //w for won
-            else return 'C'; //c for continue
+            if (PlayerHasWon(column)) return 'W'; //first check for if player has won
+            if (WholeBoardIsFull()) return 'F'; //then check if board is full
+            return 'C'; //otherwise continue
 
         }
 
