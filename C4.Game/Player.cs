@@ -1,5 +1,5 @@
 ﻿namespace C4_Game
-{
+{ 
     public class Player
     {
         public bool IsPlayerOne { get; set; }
@@ -57,6 +57,12 @@
                 Console.Write("X");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("), enter your column!");
+
+                Console.Write("Or, Player 2 (");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("O");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("), press U to undo!");
             }
             else
             {
@@ -65,6 +71,12 @@
                 Console.Write("O");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("), enter your column!");
+
+                Console.Write("Or, Player 1 (");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("X");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("), press U to undo!");
             }
         }
     }

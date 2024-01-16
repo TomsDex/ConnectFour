@@ -34,6 +34,7 @@
 
             for (int row = 0; row < 6; row++) //For each row
             {
+                Console.Write(row); 
                 Console.Write("|"); //Left hand side
 
                 for (int column = 0; column < 7; column++) //For each column
@@ -297,7 +298,7 @@
             bool isPlayerOneTurn = true;
             char GameStatus = 'C'; //Continues game
 
-            byte columnInput = 18; //18 is a null value to show no tokens have been placed (actually matches undo value for reusability of code)
+            byte columnInput = 9; //9 is a null value to show no tokens have been placed
             byte previousColumnInput;
 
             while (GameStatus == 'C') //Turn cycle continues while no one has won
@@ -307,27 +308,30 @@
                 currentPlayer.OutputPlayerInputPrompt();
 
                 previousColumnInput = columnInput; //Stores the old column input in the case of an undo
+                columnInput = currentPlayer.PlayerTurn();
 
-                while (!TokenHasDropped(columnInput, isPlayerOneTurn))
+                if (columnInput == 18) //If user selected undo
                 {
-                    columnInput = currentPlayer.PlayerTurn();
-
-                    if (columnInput == 18) //If user selected undo
+                    if (previousColumnInput == 9)
                     {
-                        if (previousColumnInput == 18)
-                        {
-                            Console.WriteLine("Nothing to undo!");
-                        }
-                        else
-                        {
-                            UndoTurn(previousColumnInput);
-                            Console.Clear();
-                            OutputBoard();
-                            Console.WriteLine("Turn has been undone!");
-                        }
+                        Console.WriteLine("Nothing to undo!");
+                        isPlayerOneTurn = !isPlayerOneTurn; //Flips the value of isPlayerOneTurn in anticipation of it being flipped again below
+                    }
+                    else
+                    {
+                        UndoTurn(previousColumnInput);
+                        Console.Clear();
+                        OutputBoard();
+                        Console.WriteLine("Turn has been undone!");
                     }
                 }
-
+                else
+                {
+                    while (!TokenHasDropped(columnInput, isPlayerOneTurn))
+                    {
+                        columnInput = currentPlayer.PlayerTurn();
+                    }
+                }
                 isPlayerOneTurn = !isPlayerOneTurn; //Switches player if token drops or if undo turn was selected
 
             }
