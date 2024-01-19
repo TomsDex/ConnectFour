@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-namespace C4_Game
+﻿namespace C4_Game
 {
     public class Game
     {
