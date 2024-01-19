@@ -302,7 +302,7 @@ namespace C4_Game
         /// <summary>
         /// Overall game logic
         /// </summary>
-        internal void StartGame()
+        internal void PlayGame()
         {
             //Initial setup
             Console.WriteLine("Game start!");
@@ -319,46 +319,43 @@ namespace C4_Game
             {
                 Player currentPlayer = isPlayerOneTurn ? playerOne : playerTwo; //Switches player depending on value of isPlayerOneTurn
 
-                currentPlayer.OutputPlayerInputPrompt(UndoCanBePerformed(previousColumnInput));
+                currentPlayer.OutputPlayerInputPrompt(UndoCanBePerformed(previousColumnInput)); //Outputs player input prompt while not outputting undo prompt if undo is not possible
                 
-                columnInput = currentPlayer.PlayerTurn();
+                columnInput = currentPlayer.PlayerTurn(); //Stores user input
 
                 if (columnInput == 18) //Undo has been selected
                 {
                     if (UndoCanBePerformed(previousColumnInput)) //Last turn was not an undo
                     {
                         UndoTurn(previousColumnInput);
+
+                        //Rewrite board
                         Console.Clear();
                         OutputBoard();
                         Console.WriteLine("Turn has been undone!");
+
                         isPlayerOneTurn = !isPlayerOneTurn; //Alternates turn
 
                     }
-                    else
-                    {
-                        Console.WriteLine("Nothing to undo!");
-                    }
+                    else { Console.WriteLine("Nothing to undo!"); }
                 }
-                else 
+                else //Undo has not been selected
                 { 
-                    if (!TokenHasDropped(columnInput, isPlayerOneTurn)) 
+                    if (!TokenHasDropped(columnInput, isPlayerOneTurn)) //If turn is invalid
                     {
                         
                     }
-                    else
-                    {
-                        isPlayerOneTurn = !isPlayerOneTurn; //Alternates turn
-                    }
+                    else { isPlayerOneTurn = !isPlayerOneTurn; } //Turn is valid - alternates turn
                 }
 
                 previousColumnInput = columnInput; //Remembers last valid column input
-            }
 
-            //If the last input was not an undo
-            if (columnInput != 18)
-            {
-                //Check if anyone has won 
-                GameStatus = IsEndOfGame(columnInput);
+                //If the last input was not an undo
+                if (columnInput != 18)
+                {
+                    //Check if anyone has won 
+                    GameStatus = IsEndOfGame(columnInput);
+                }
             }
 
             if (GameStatus == 'F') //Board is full
@@ -377,7 +374,7 @@ namespace C4_Game
             {
                 Console.Clear();
                 Game newGame = new Game();
-                newGame.StartGame();
+                newGame.PlayGame();
             }
         }        
     }
