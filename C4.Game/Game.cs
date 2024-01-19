@@ -36,7 +36,6 @@ namespace C4_Game
 
             for (int row = 0; row < 6; row++) //For each row
             {
-                Console.Write(row); 
                 Console.Write("|"); //Left hand side
 
                 for (int column = 0; column < 7; column++) //For each column
@@ -271,10 +270,8 @@ namespace C4_Game
         /// <returns>True if the turn before has not been an undo</returns>
         private static bool UndoCanBePerformed(byte column)
         {
-            if (column == 9 || column == 18) //If no token has been placed or last turn was an undo
-            {
-                return false;
-            }
+            //If no token has been placed or last turn was an undo return false
+            if (column == 9 || column == 18) { return false; }
             else { return true; }
         }
 
@@ -285,6 +282,11 @@ namespace C4_Game
         {
             byte row = GetRowNumber(lastColumn); //Find the row which the last placed token was put in
             Board[row, lastColumn] = 'e'; //Mark space as empty
+
+            //Rewrite board
+            Console.Clear();
+            OutputBoard();
+            Console.WriteLine("Turn has been undone!");
         }
 
         /// <summary>
@@ -300,7 +302,21 @@ namespace C4_Game
         }
 
         /// <summary>
-        /// Overall game logic
+        /// Allows for a replay
+        /// </summary>
+        private static void OfferReplay()
+        {
+            Console.WriteLine("Hit enter to play again!");
+            if (Console.ReadKey().Key == ConsoleKey.Enter)
+            {
+                Console.Clear();
+                Game newGame = new();
+                newGame.PlayGame();
+            }
+        }
+
+        /// <summary>
+        /// Contains the procedure for advancing through each player turn
         /// </summary>
         internal void PlayGame()
         {
@@ -314,11 +330,13 @@ namespace C4_Game
             char GameStatus = 'C'; //Continues game
             byte previousColumnInput = 9; //Remembers last valid token input. Initialisation value
 
+            //Game cycle
             while (GameStatus == 'C') //Turn cycle continues while no one has won
             {
                 Player currentPlayer = isPlayerOneTurn ? playerOne : playerTwo; //Switches player depending on value of isPlayerOneTurn
 
-                currentPlayer.OutputPlayerInputPrompt(UndoCanBePerformed(previousColumnInput)); //Outputs player input prompt while not outputting undo prompt if undo is not possible
+                //Outputs player input prompt while checking if undo is possible
+                currentPlayer.OutputPlayerInputPrompt(UndoCanBePerformed(previousColumnInput)); 
 
                 byte columnInput = currentPlayer.PlayerTurn();
 
@@ -327,54 +345,35 @@ namespace C4_Game
                     if (UndoCanBePerformed(previousColumnInput)) //Last turn was not an undo
                     {
                         UndoTurn(previousColumnInput);
-
-                        //Rewrite board
-                        Console.Clear();
-                        OutputBoard();
-                        Console.WriteLine("Turn has been undone!");
-
                         isPlayerOneTurn = !isPlayerOneTurn; //Alternates turn
-
                     }
                     else { Console.WriteLine("Nothing to undo!"); }
+                    //Do not alternate turn
                 }
                 else //Undo has not been selected
-                { 
+                {
                     if (!TokenHasDropped(columnInput, isPlayerOneTurn)) //If turn is invalid
                     {
-                        
+
                     }
-                    else { isPlayerOneTurn = !isPlayerOneTurn; } //Turn is valid - alternates turn
+                    else //Turn is invalid
+                    {
+                        GameStatus = IsEndOfGame(columnInput); //Checks for end game cons
+                        isPlayerOneTurn = !isPlayerOneTurn; //Switches player
+                    }
                 }
-
                 previousColumnInput = columnInput; //Remembers last valid column input
-
-                //If the last input was not an undo
-                if (columnInput != 18)
-                {
-                    //Check if anyone has won 
-                    GameStatus = IsEndOfGame(columnInput);
-                }
             }
 
-            if (GameStatus == 'F') //Board is full
-            {
-                Console.WriteLine("The game has ended in a draw! The board is full.");
-            }
+            if (GameStatus == 'F')
+            { Console.WriteLine("The game has ended in a draw! The board is full."); }
             if (GameStatus == 'W') //Player has won
             {
                 if (!isPlayerOneTurn) Console.WriteLine("Player 1 wins!"); //Output inverse because the value is switched before it is passed in
                 else Console.WriteLine("Player 2 wins!");
             }
 
-            //Replay option
-            Console.WriteLine("Hit enter to play again!");
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
-            {
-                Console.Clear();
-                Game newGame = new();
-                newGame.PlayGame();
-            }
-        }        
+            OfferReplay();
+        }
     }
 }
