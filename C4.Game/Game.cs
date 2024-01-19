@@ -14,7 +14,7 @@ namespace C4_Game
         /// <summary>
         /// Creates a new blank board for creation of a new game
         /// </summary>
-        private char[,] CreateEmptyBoard()
+        private static char[,] CreateEmptyBoard()
         {
             return new char[,]
             {          //layout of empty board
@@ -121,7 +121,7 @@ namespace C4_Game
 
             //row would remain at 0 if the top row was full or empty if the second row was full
             //Therefore if the selected position is empty, move down one row to the newly placed token
-            //This prevents unnecessarly moving down when the top row is not full
+            //This prevents unnecessarily moving down when the top row is not full
             if (ReturnPositionalChar(row, column) == 'e') row++;
 
             return row;
@@ -133,7 +133,7 @@ namespace C4_Game
         /// <returns>True if a player has connected four tokens</returns>
         private bool PlayerHasWon(byte column)
         {
-            byte row = GetRowNumber(column); //Get full coords of token last placed
+            byte row = GetRowNumber(column); //Get full coordinates of token last placed
 
             //Positions in relation to new token are as follows (8 is new token)
             //  0   1   2
@@ -269,7 +269,7 @@ namespace C4_Game
         /// Checks if a turn can be undone
         /// </summary>
         /// <returns>True if the turn before has not been an undo</returns>
-        private bool UndoCanBePerformed(byte column)
+        private static bool UndoCanBePerformed(byte column)
         {
             if (column == 9 || column == 18) //If no token has been placed or last turn was an undo
             {
@@ -312,7 +312,6 @@ namespace C4_Game
             Player playerTwo = new(false);
             bool isPlayerOneTurn = true;
             char GameStatus = 'C'; //Continues game
-            byte columnInput = 9; //Initialisation value
             byte previousColumnInput = 9; //Remembers last valid token input. Initialisation value
 
             while (GameStatus == 'C') //Turn cycle continues while no one has won
@@ -320,8 +319,8 @@ namespace C4_Game
                 Player currentPlayer = isPlayerOneTurn ? playerOne : playerTwo; //Switches player depending on value of isPlayerOneTurn
 
                 currentPlayer.OutputPlayerInputPrompt(UndoCanBePerformed(previousColumnInput)); //Outputs player input prompt while not outputting undo prompt if undo is not possible
-                
-                columnInput = currentPlayer.PlayerTurn(); //Stores user input
+
+                byte columnInput = currentPlayer.PlayerTurn();
 
                 if (columnInput == 18) //Undo has been selected
                 {
@@ -373,7 +372,7 @@ namespace C4_Game
             if (Console.ReadKey().Key == ConsoleKey.Enter)
             {
                 Console.Clear();
-                Game newGame = new Game();
+                Game newGame = new();
                 newGame.PlayGame();
             }
         }        
