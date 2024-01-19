@@ -1,4 +1,6 @@
-﻿namespace C4_Game
+﻿using System.Data.Common;
+
+namespace C4_Game
 {
     public class Game
     {
@@ -264,6 +266,19 @@
         }
 
         /// <summary>
+        /// Checks if a turn can be undone
+        /// </summary>
+        /// <returns>True if the turn before has not been an undo</returns>
+        private bool UndoCanBePerformed(byte column)
+        {
+            if (column == 9 || column == 18) //If no token has been placed or last turn was an undo
+            {
+                return false;
+            }
+            else { return true; }
+        }
+
+        /// <summary>
         /// Contains logic to undo the previous turn
         /// </summary>
         private void UndoTurn(byte lastColumn)
@@ -297,43 +312,46 @@
             Player playerTwo = new(false);
             bool isPlayerOneTurn = true;
             char GameStatus = 'C'; //Continues game
-
-            byte columnInput = 9; //9 is a null value to show no tokens have been placed
-            byte previousColumnInput;
+            byte columnInput = 9; //Initialisation value
+            byte previousColumnInput = 9; //Remembers last valid token input. Initialisation value
 
             while (GameStatus == 'C') //Turn cycle continues while no one has won
             {
                 Player currentPlayer = isPlayerOneTurn ? playerOne : playerTwo; //Switches player depending on value of isPlayerOneTurn
 
-                currentPlayer.OutputPlayerInputPrompt();
-
-                previousColumnInput = columnInput; //Stores the old column input in the case of an undo
+                currentPlayer.OutputPlayerInputPrompt(UndoCanBePerformed(previousColumnInput));
+                
                 columnInput = currentPlayer.PlayerTurn();
 
-                if (columnInput == 18) //If user selected undo
+                if (columnInput == 18) //Undo has been selected
                 {
-                    if (previousColumnInput == 9)
-                    {
-                        Console.WriteLine("Nothing to undo!");
-                        isPlayerOneTurn = !isPlayerOneTurn; //Flips the value of isPlayerOneTurn in anticipation of it being flipped again below
-                    }
-                    else
+                    if (UndoCanBePerformed(previousColumnInput)) //Last turn was not an undo
                     {
                         UndoTurn(previousColumnInput);
                         Console.Clear();
                         OutputBoard();
                         Console.WriteLine("Turn has been undone!");
-                    }
-                }
-                else
-                {
-                    while (!TokenHasDropped(columnInput, isPlayerOneTurn))
-                    {
-                        columnInput = currentPlayer.PlayerTurn();
-                    }
-                }
-                isPlayerOneTurn = !isPlayerOneTurn; //Switches player if token drops or if undo turn was selected
+                        isPlayerOneTurn = !isPlayerOneTurn; //Alternates turn
 
+                    }
+                    else
+                    {
+                        Console.WriteLine("Nothing to undo!");
+                    }
+                }
+                else 
+                { 
+                    if (!TokenHasDropped(columnInput, isPlayerOneTurn)) 
+                    {
+                        
+                    }
+                    else
+                    {
+                        isPlayerOneTurn = !isPlayerOneTurn; //Alternates turn
+                    }
+                }
+
+                previousColumnInput = columnInput; //Remembers last valid column input
             }
 
             //If the last input was not an undo
@@ -342,8 +360,7 @@
                 //Check if anyone has won 
                 GameStatus = IsEndOfGame(columnInput);
             }
-        
-    
+
             if (GameStatus == 'F') //Board is full
             {
                 Console.WriteLine("The game has ended in a draw! The board is full.");

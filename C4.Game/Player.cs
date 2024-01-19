@@ -48,7 +48,7 @@
         /// <summary>
         /// Prompts user to input column number
         /// </summary>
-        internal void OutputPlayerInputPrompt()
+        internal void OutputPlayerInputPrompt(bool canUndo)
         {
             if (IsPlayerOne)
             {
@@ -58,11 +58,14 @@
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("), enter your column!");
 
-                Console.Write("Or, Player 2 (");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write("O");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("), press U to undo!");
+                if (canUndo)
+                {
+                    Console.Write("Or, Player 2 (");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.Write("O");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("), press U to undo!");
+                }
             }
             else
             {
@@ -72,11 +75,14 @@
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("), enter your column!");
 
-                Console.Write("Or, Player 1 (");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("X");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("), press U to undo!");
+                if (canUndo)
+                {
+                    Console.Write("Or, Player 1 (");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("X");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("), press U to undo!");
+                }
             }
         }
     }
