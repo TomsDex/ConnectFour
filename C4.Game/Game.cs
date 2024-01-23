@@ -336,7 +336,7 @@
                 //Outputs player input prompt while checking if undo is possible
                 currentPlayer.OutputPlayerInputPrompt(UndoCanBePerformed(previousColumnInput)); 
 
-                byte columnInput = currentPlayer.PlayerTurn();
+                byte columnInput = Player.PlayerTurn();
 
                 if (columnInput == 18) //Undo has been selected
                 {
