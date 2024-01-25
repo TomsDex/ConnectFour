@@ -9,6 +9,8 @@
             Board = CreateEmptyBoard();
         }
 
+
+
         /// <summary>
         /// Creates a new blank board for creation of a new game
         /// </summary>
@@ -25,13 +27,15 @@
             };
         }
 
+
+
         /// <summary>
         /// Writes the board to the console
         /// </summary>
         private void OutputBoard(byte columnJustPlayed)
         {
             //Find row just played
-            //Do not find row if a null value was passed in
+            //Do not find row if a null value was passed in (eg start of game or undo)
             byte? rowJustPlayed = (columnJustPlayed != 18) ? GetRowNumber(columnJustPlayed) : null;
 
             Console.WriteLine(" 0 1 2 3 4 5 6"); //Column nos
@@ -62,6 +66,8 @@
             }
         }
 
+
+
         /// <summary>
         /// Checks if the space below the parameters is empty
         /// </summary>
@@ -75,12 +81,16 @@
             else return false; //Space below is not empty
         }
 
+
+
         /// <summary>
         /// Checks if the column is full
         /// </summary>
         /// <param name="column"></param>
         /// <returns>True if the character in row 0 is not 'e'</returns>
         private bool ColumnIsFull(byte column) { return Board[0, column] != 'e'; }
+
+
 
         /// <summary>
         /// Checks if whole board is full
@@ -97,6 +107,8 @@
                 && Board[0, 6] != 'e';
         }
 
+
+
         /// <summary>
         /// Contains input validation to check if the given coordinate is off the map.
         /// This is used during win logic checking to prevent crashes when checking 
@@ -111,12 +123,14 @@
             return Board[row, column];
         }
 
-    /// <summary>
+
+
+        /// <summary>
     /// Finds which row the last token in that column fell into
     /// </summary>
     /// <param name="column"></param>
     /// <returns>The row number</returns>
-    private byte GetRowNumber(byte column)
+        private byte GetRowNumber(byte column)
         {
             byte row = 0;
 
@@ -130,6 +144,8 @@
 
             return row;
         }
+
+
 
         /// <summary>
         /// Contains win logic
@@ -239,6 +255,8 @@
             return false;
         }
 
+
+
         /// <summary>
         /// Drops token, checks if the token has dropped to the bottom of the board and clears the console before rewriting board
         /// </summary>
@@ -267,6 +285,8 @@
             }
         }
 
+
+
         /// <summary>
         /// Checks if a turn can be undone
         /// </summary>
@@ -277,6 +297,8 @@
             if (column == 9 || column == 18) { return false; }
             else { return true; }
         }
+
+
 
         /// <summary>
         /// Contains logic to undo the previous turn
@@ -292,6 +314,8 @@
             Console.WriteLine("Turn has been undone!");
         }
 
+
+
         /// <summary>
         /// Checks if any game ending condition has been met
         /// </summary>
@@ -303,6 +327,8 @@
             return 'C'; //otherwise continue
 
         }
+
+
 
         /// <summary>
         /// Allows for a replay
@@ -317,6 +343,8 @@
                 newGame.PlayGame();
             }
         }
+
+
 
         /// <summary>
         /// Contains the procedure for advancing through each player turn
