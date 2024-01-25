@@ -100,16 +100,16 @@
         /// <returns>The char in the given position, otherwise 'e' if off the map</returns>
         private char ReturnPositionalChar(int row, int column)
         {
-            try { return Board[row, column]; }
-            catch (IndexOutOfRangeException) { return 'e'; } //Return empty if the given coordinate does not exist
+            if (row <= -1 || column <= -1 || row >= 6 || column >= 7) { return 'e'; } //Return empty if the given coordinate does not exist
+            return Board[row, column];
         }
 
-        /// <summary>
-        /// Finds which row the last token in that column fell into
-        /// </summary>
-        /// <param name="column"></param>
-        /// <returns>The row number</returns>
-        private byte GetRowNumber(byte column)
+    /// <summary>
+    /// Finds which row the last token in that column fell into
+    /// </summary>
+    /// <param name="column"></param>
+    /// <returns>The row number</returns>
+    private byte GetRowNumber(byte column)
         {
             byte row = 0;
 
