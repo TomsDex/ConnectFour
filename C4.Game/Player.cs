@@ -10,8 +10,7 @@
         /// Processes and returns user input
         /// </summary>
         /// <returns>The player's selected column if it is a valid input</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Field cannot be marked static as it is directly called")]
-        public byte PlayerTurn() 
+        public static byte PlayerTurn() 
         {
             return ValidUserInput(); 
         }
