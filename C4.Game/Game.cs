@@ -46,7 +46,8 @@
 
                     else
                     {
-                        if (rowJustPlayed != null && row == rowJustPlayed && column == columnJustPlayed) Console.BackgroundColor = ConsoleColor.White;
+                        if (rowJustPlayed != null && row == rowJustPlayed && column == columnJustPlayed)
+                            { Console.BackgroundColor = ConsoleColor.White; }
                         if (Board[row, column] == 'X') Console.ForegroundColor = ConsoleColor.Red;
                         if (Board[row, column] == 'O') Console.ForegroundColor = ConsoleColor.Blue;
                         Console.Write(Board[row, column]); //If (row,column) has a value, write the value
