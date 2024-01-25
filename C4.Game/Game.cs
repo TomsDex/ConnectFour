@@ -28,8 +28,12 @@
         /// <summary>
         /// Writes the board to the console
         /// </summary>
-        private void OutputBoard()
+        private void OutputBoard(byte columnJustPlayed)
         {
+            //Find row just played
+            //Do not find row if a null value was passed in
+            byte? rowJustPlayed = (columnJustPlayed != 18) ? GetRowNumber(columnJustPlayed) : null;
+
             Console.WriteLine(" 0 1 2 3 4 5 6"); //Column nos
 
             for (int row = 0; row < 6; row++) //For each row
@@ -42,10 +46,12 @@
 
                     else
                     {
+                        if (rowJustPlayed != null && row == rowJustPlayed && column == columnJustPlayed) Console.BackgroundColor = ConsoleColor.White;
                         if (Board[row, column] == 'X') Console.ForegroundColor = ConsoleColor.Red;
                         if (Board[row, column] == 'O') Console.ForegroundColor = ConsoleColor.Blue;
                         Console.Write(Board[row, column]); //If (row,column) has a value, write the value
                         Console.ForegroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = ConsoleColor.Black;
                     }
 
 
@@ -256,8 +262,6 @@
                 if (isPlayerOne) { Board[row, column] = 'X'; }
                 else { Board[row, column] = 'O'; }
 
-                Console.Clear();
-                OutputBoard();
                 return true;
             }
         }
@@ -283,7 +287,7 @@
 
             //Rewrite board
             Console.Clear();
-            OutputBoard();
+            OutputBoard(18); //Output board with null column just played
             Console.WriteLine("Turn has been undone!");
         }
 
@@ -320,7 +324,7 @@
         {
             //Initial setup
             Console.WriteLine("Game start!");
-            OutputBoard();
+            OutputBoard(18);
 
             Player playerOne = new(true);
             Player playerTwo = new(false);
@@ -352,10 +356,12 @@
                 {
                     if (!TokenHasDropped(columnInput, isPlayerOneTurn)) //If turn is invalid
                     {
-
+                        
                     }
-                    else //Turn is invalid
+                    else //Turn is valid
                     {
+                        Console.Clear();
+                        OutputBoard(columnInput);
                         GameStatus = IsEndOfGame(columnInput); //Checks for end game cons
                         isPlayerOneTurn = !isPlayerOneTurn; //Switches player
                     }
