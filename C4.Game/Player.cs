@@ -2,15 +2,13 @@
 { 
     public class Player(bool isPlayerOne)
     {
-        public bool IsPlayerOne { get; set; } = DetermineIfPlayerOne(isPlayerOne);
-
-        private static bool DetermineIfPlayerOne(bool isPlayerOne) { return isPlayerOne; }
+        public bool IsPlayerOne { get; set; } = isPlayerOne;
 
         /// <summary>
         /// Processes and returns user input
         /// </summary>
         /// <returns>The player's selected column if it is a valid input</returns>
-        public static byte PlayerTurn() 
+        internal static byte PlayerTurn() 
         {
             return ValidUserInput(); 
         }
@@ -20,7 +18,7 @@
         /// or has selected u to undo
         /// </summary>
         /// <returns>The column number, or 18 if undo</returns>
-        internal static byte ValidUserInput()
+        private static byte ValidUserInput()
         {
             while (true)
             {
