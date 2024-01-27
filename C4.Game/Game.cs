@@ -1,4 +1,4 @@
-﻿namespace C4_Game
+﻿namespace C4.Game
 {
     public class Game
     {
@@ -16,7 +16,7 @@
         /// </summary>
         private static char[,] CreateEmptyBoard()
         {
-            return new char[,]
+            return new[,]
             {          //layout of empty board
                 { 'e', 'e', 'e', 'e', 'e', 'e', 'e' },
                 { 'e', 'e', 'e', 'e', 'e', 'e', 'e' },
@@ -358,11 +358,11 @@
             Player playerOne = new(true);
             Player playerTwo = new(false);
             bool isPlayerOneTurn = true;
-            char GameStatus = 'C'; //Continues game
+            char gameStatus = 'C'; //Continues game
             byte previousColumnInput = 9; //Remembers last valid token input. Initialisation value
 
             //Game cycle
-            while (GameStatus == 'C') //Turn cycle continues while no one has won
+            while (gameStatus == 'C') //Turn cycle continues while no one has won
             {
                 Player currentPlayer = isPlayerOneTurn ? playerOne : playerTwo; //Switches player depending on value of isPlayerOneTurn
 
@@ -391,16 +391,16 @@
                     {
                         Console.Clear();
                         OutputBoard(columnInput);
-                        GameStatus = IsEndOfGame(columnInput); //Checks for end game cons
+                        gameStatus = IsEndOfGame(columnInput); //Checks for end game cons
                         isPlayerOneTurn = !isPlayerOneTurn; //Switches player
                     }
                 }
                 previousColumnInput = columnInput; //Remembers last valid column input
             }
 
-            if (GameStatus == 'F')
+            if (gameStatus == 'F')
             { Console.WriteLine("The game has ended in a draw! The board is full."); }
-            if (GameStatus == 'W') //Player has won
+            if (gameStatus == 'W') //Player has won
             {
                 if (!isPlayerOneTurn) Console.WriteLine("Player 1 wins!"); //Output inverse because the value is switched before it is passed in
                 else Console.WriteLine("Player 2 wins!");

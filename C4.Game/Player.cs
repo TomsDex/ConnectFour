@@ -1,4 +1,4 @@
-﻿namespace C4_Game
+﻿namespace C4.Game
 { 
     public class Player(bool isPlayerOne)
     {
@@ -33,7 +33,8 @@
                 if (char.IsDigit(input)) //Checks that input is digit
                 {
                     byte choice = (byte)(input - '0'); //Converts char to byte
-                    if (choice >= 0 && choice <= 6) return choice; //Returns if valid column number
+                    if (choice <= 6) return choice; //Returns if valid column number
+                    //choice is never less than zero
                 }
                 //otherwise prompt again
                 Console.WriteLine("Please enter a column between 0 and 6!");

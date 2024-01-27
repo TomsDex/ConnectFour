@@ -1,6 +1,6 @@
-﻿using C4_Game;
+﻿namespace C4.Game;
 
-internal class Program
+internal abstract class Program
 {
     private static void Main()
     {
