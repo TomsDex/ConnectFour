@@ -1,86 +1,83 @@
-﻿namespace C4.Game
-{ 
-    public class Player(bool isPlayerOne)
+﻿namespace C4.Game;
+
+public class Player(bool isPlayerOne)
+{
+    private bool IsPlayerOne { get; } = isPlayerOne;
+
+
+    /// <summary>
+    /// Processes and returns user input
+    /// </summary>
+    /// <returns>The player's selected column if it is a valid input</returns>
+    internal static byte PlayerTurn() 
     {
-        public bool IsPlayerOne { get; set; } = isPlayerOne;
+        return ValidUserInput(); 
+    }
 
 
-        /// <summary>
-        /// Processes and returns user input
-        /// </summary>
-        /// <returns>The player's selected column if it is a valid input</returns>
-        internal static byte PlayerTurn() 
+    /// <summary>
+    /// Ensures the user has entered a valid column number
+    /// or has selected u to undo
+    /// </summary>
+    /// <returns>The column number, or 18 if undo</returns>
+    private static byte ValidUserInput()
+    {
+        while (true)
         {
-            return ValidUserInput(); 
+            var keyInfo = Console.ReadKey();
+            var input = keyInfo.KeyChar;
+
+            if (input.ToString() == "u") { return 18; } //If user presses U signal an undo
+
+            //Otherwise
+            if (char.IsDigit(input)) //Checks that input is digit
+            {
+                var choice = (byte)(input - '0'); //Converts char to byte
+                if (choice <= 6) return choice; //Returns if valid column number
+                //choice is never less than zero
+            }
+            //otherwise prompt again
+            Console.WriteLine("Please enter a column between 0 and 6!");
         }
+    }
 
 
-        /// <summary>
-        /// Ensures the user has entered a valid column number
-        /// or has selected u to undo
-        /// </summary>
-        /// <returns>The column number, or 18 if undo</returns>
-        private static byte ValidUserInput()
+    /// <summary>
+    /// Prompts user to input column number
+    /// </summary>
+    internal void OutputPlayerInputPrompt(bool canUndo)
+    {
+        if (IsPlayerOne)
         {
-            while (true)
-            {
-                ConsoleKeyInfo keyInfo = Console.ReadKey();
-                char input = keyInfo.KeyChar;
+            Console.Write("Player 1 (");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("X");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("), enter your column!");
 
-                if (input.ToString() == "u") { return 18; } //If user presses U signal an undo
+            if (!canUndo) return;
 
-                //Otherwise
-                if (char.IsDigit(input)) //Checks that input is digit
-                {
-                    byte choice = (byte)(input - '0'); //Converts char to byte
-                    if (choice <= 6) return choice; //Returns if valid column number
-                    //choice is never less than zero
-                }
-                //otherwise prompt again
-                Console.WriteLine("Please enter a column between 0 and 6!");
-            }
+            Console.Write("Or, Player 2 (");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("O");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("), press U to undo!");
         }
-
-
-        /// <summary>
-        /// Prompts user to input column number
-        /// </summary>
-        internal void OutputPlayerInputPrompt(bool canUndo)
+        else
         {
-            if (IsPlayerOne)
-            {
-                Console.Write("Player 1 (");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("X");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("), enter your column!");
+            Console.Write("Player 2 (");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("O");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("), enter your column!");
 
-                if (canUndo)
-                {
-                    Console.Write("Or, Player 2 (");
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.Write("O");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("), press U to undo!");
-                }
-            }
-            else
-            {
-                Console.Write("Player 2 (");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write("O");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("), enter your column!");
+            if (!canUndo) return;
 
-                if (canUndo)
-                {
-                    Console.Write("Or, Player 1 (");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("X");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("), press U to undo!");
-                }
-            }
+            Console.Write("Or, Player 1 (");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("X");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("), press U to undo!");
         }
     }
 }
