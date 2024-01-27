@@ -4,6 +4,7 @@
     {
         public bool IsPlayerOne { get; set; } = isPlayerOne;
 
+
         /// <summary>
         /// Processes and returns user input
         /// </summary>
@@ -12,6 +13,7 @@
         {
             return ValidUserInput(); 
         }
+
 
         /// <summary>
         /// Ensures the user has entered a valid column number
@@ -37,6 +39,7 @@
                 Console.WriteLine("Please enter a column between 0 and 6!");
             }
         }
+
 
         /// <summary>
         /// Prompts user to input column number
